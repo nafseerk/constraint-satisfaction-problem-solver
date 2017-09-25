@@ -1,1 +1,1 @@
-Solving Sudoku using Constraint Satisfaction Problem(Solver) Solver
+Solving Sudoku using Constraint Satisfaction Problem(CSP) Solver
