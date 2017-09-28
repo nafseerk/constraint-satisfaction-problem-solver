@@ -1,18 +1,18 @@
 
 class Variable:
+    """Class representing a CSP variable with utility functions. Contains:
+       1. name - an identifier for the variable (represented as a string)
+       2. domain - the domain of the variable
+       3. value - the current value of the variable. Value '0' means unassigned variable 
+       4. isAssigned - true if the variable is currently assigned. False otherwises
+    """
 
     def __init__(self, name, domain, value='0'):
         self.name = name
-        self.domain = set(domain)
-        self.isAssigned = False
-        if value != '0':
-            if value not in domain:
-                #print('Variable can only be assigned a value from its domain')
-                return
-            self.isAssigned = True
         self.value = value
+        self.domain = set(domain)
         self.domain.discard(value)
-        
+        self.isAssigned = False
         if self.value != '0':
             self.isAssigned = True
 
@@ -27,27 +27,37 @@ class Variable:
     def getDomain(self):
         return list(self.domain)
 
-    #Assigns value to the variable and returns success/failure        
+    def isAssigned(self):
+        return  self.isAssigned
+       
     def assign(self, value):
+        """Assigns value to the variable and returns success/failure"""
         if value not in self.domain:
-            print('Variable can only be assigned a value from its domain')
+            print('ERROR! value of the variable not in its domain')
             return False
 
         self.value = value
-        self.isAssigned = True
         self.domain.discard(value)
+        self.isAssigned = True
         return True
 
+    def unAssign(self, value):
+        self.value = '0'
+        self.isAssigned = False
+        self.domain.add(value)
+        
     def removeFromDomain(self, value):
         self.domain.discard(value)
 
     def removeValuesFromDomain(self, valuesList):
+        """Remove a set of values from the domain"""
         for value in valuesList:
             self.domain.discard(value)
 
     def updateDomain(self, domainValuesList):
+        """Update the domain of the variable with a new list"""
         self.domain = set(domainValuesList)
-        self.value = None
+        self.value = '0'
         self.isAssigned = False
 
     def print(self):
