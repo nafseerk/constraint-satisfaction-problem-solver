@@ -74,6 +74,41 @@ class SudokuCSP():
             #'standard-backtrack' returns the values in sorted order
             domainValues = sorted(variable.getDomain())
         return domainValues
+
+    def applyInferences(self, variable, value, forwardCheck=False):
+        if forwardCheck == True:
+            #Get the names of all unassigned neighbours
+            allNeighbours = self.getRowNeighbours(variable) + \
+                            self.getColumnNeighbours(variable) + \
+                            self.getBoxNeighbours(variable)
+            neighbourNames = []
+            for neighbour in allNeighbours:
+                if not neighbour.isAssigned:
+                    neighbourNames.append(neighbour.getName())
+
+            #Remove the value from the domains of the neighbours
+            for i in range(81):
+                if self.variables[i].getName() in neighbourNames:
+                    self.variables[i].removeFromDomain(value)
+                    if len(self.variables[i].getDomain()) == 0:
+                        return False
+        return True
+
+    def reverseInferences(self, variable, value, forwardCheck=False):
+        if forwardCheck == True:
+            #Get the names of all unassigned neighbours
+            allNeighbours = self.getRowNeighbours(variable) + \
+                            self.getColumnNeighbours(variable) + \
+                            self.getBoxNeighbours(variable)
+            neighbourNames = []
+            for neighbour in allNeighbours:
+                if not neighbour.isAssigned:
+                    neighbourNames.append(neighbour.getName)
+
+            #Add the value back to the domains of unassigned neighbours
+            for i in range(81):
+                if self.variables[i].getName() in neighbourNames:
+                    self.variables[i].addToDomain(value)
     
     def getUnassignedCount(self):
         """Returns the count of remaining unassigned variables"""

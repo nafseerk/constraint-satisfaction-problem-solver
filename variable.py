@@ -26,9 +26,6 @@ class Variable:
 
     def getDomain(self):
         return list(self.domain)
-
-    def isAssigned(self):
-        return  self.isAssigned
        
     def assign(self, value):
         """Assigns value to the variable and returns success/failure"""
@@ -53,6 +50,9 @@ class Variable:
         """Remove a set of values from the domain"""
         for value in valuesList:
             self.domain.discard(value)
+
+    def addToDomain(self, value):
+        self.domain.add(value)
 
     def updateDomain(self, domainValuesList):
         """Update the domain of the variable with a new list"""
