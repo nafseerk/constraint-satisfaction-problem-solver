@@ -58,13 +58,38 @@ class SudokuCSP():
                 return self.variables[i]
         return None
 
-    def selectUnassignedVariable(self, policy='standard-backtrack'):
+    def selectUnassignedVariable(self, mrvHeuristic=False, maxDegreeHeuristic=False):
         """Returns the next variable to be assigned based on the policy"""
-        if policy == 'standard-backtrack':
+        if mrvHeuristic == False:
             #'standard-backtrack' returns the variables in order
             for variable in self.variables:
                 if not variable.isAssigned:
                     return variable
+            return None
+        elif mrvHeuristic == True:
+            minDomainValues = 10
+            minVariablesList = []
+            for variable in self.variables:
+                if not variable.isAssigned:
+                   if len(variable.getDomain()) < minDomainValues:
+                        minDomainValues = len(variable.getDomain())
+                        minVariablesList.clear()
+                        minVariablesList.append(variable)
+                   elif len(variable.getDomain()) == minDomainValues:
+                        minVariablesList.append(variable)
+            if len(minVariablesList) > 1 and maxDegreeHeuristic == True:
+                maxDegree = -1
+                maxDegreeVariablesList = []
+                for v in minVariablesList:
+                    if self.getUnassignedNeighboursCount(v) > maxDegree:
+                        maxDegree = self.getUnassignedNeighboursCount(v)
+                        maxDegreeVariablesList.clear()
+                        maxDegreeVariablesList.append(v)
+                    elif self.getUnassignedNeighboursCount(v) == maxDegree:
+                        maxDegreeVariablesList.append(v)
+                return maxDegreeVariablesList[0]
+            else:     
+                if minVariablesList: return minVariablesList[0]
             return None
 
     def orderDomainValues(self, variable, policy='standard-backtrack'):
@@ -187,6 +212,17 @@ class SudokuCSP():
 
         return boxNeighbours
 
+    def getUnassignedNeighboursCount(self, variable):
+        count = 0
+        allNeighbours = self.getRowNeighbours(variable) + \
+                        self.getColumnNeighbours(variable) + \
+                        self.getBoxNeighbours(variable)
+
+        for neighbour in allNeighbours:
+            if neighbour.isAssigned == False:
+                count += 1
+        return count
+        
     def isConstraintsSatisfied(self, variable, value):
         """Evaluates the 3 AllDiff constraints after the assignment of value to variable"""
         rowNeighbours = self.getRowNeighbours(variable)
