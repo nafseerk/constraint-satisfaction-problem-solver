@@ -263,12 +263,12 @@ class SudokuCSP():
 
         return rowConstraintSatisfied and colConstraintSatisfied and boxConstraintSatisfied
 
-    def print(self):
+    def print(self, file=None):
         """Print the assignment list as a sudoku grid"""
         listOfValues = self.currentAssignment.split(',')
         for i in range(81):
-            print(listOfValues[i], end='  ')
-            if(i % 9 == 8):print()
+            print(listOfValues[i], end='  ', file=file)
+            if(i % 9 == 8):print(file=file)
 
 if __name__ == '__main__':
     sudokuGrid = SudokuGrid('/Users/apple/Documents/git-repos/sudoku/sudoku-as-csp/input-data/18/4.sd')
