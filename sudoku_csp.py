@@ -92,10 +92,31 @@ class SudokuCSP():
                 if minVariablesList: return minVariablesList[0]
             return None
 
-    def orderDomainValues(self, variable, policy='standard-backtrack'):
+    def orderDomainValues(self, variable, lcvHeuristic=False):
         """Returns the domain values of the variable. Order of the variables depends on the policy"""
         domainValues = []
-        if policy == 'standard-backtrack':
+        if lcvHeuristic == True and len(variable.getDomain()) > 1:
+            #Get All unassigned neighbors of the current variable
+            allNeighbours = self.getRowNeighbours(variable) + \
+                            self.getColumnNeighbours(variable) + \
+                            self.getBoxNeighbours(variable)
+            allNeighbours = [v for v in allNeighbours if v.isAssigned == False]
+
+            #For each value, get the number of times it occurs (which is the same as number of times it rules out
+            #that value of the neighbour) in the neighbours.
+            #And Order them in ascending order
+            valueWithReductionsCount = []
+            for value in variable.getDomain():
+                reductions = 0
+                for neighbour in allNeighbours:
+                    if value in neighbour.getDomain():
+                        reductions += 1
+                valueWithReductionsCount.append((value, reductions))
+                
+                #The value 'value' can be ruled out 'reductions' times from its neighbors 
+                valueWithReductionsCount = sorted(valueWithReductionsCount, key=lambda tup: tup[1])
+                domainValues = [value for (value,reductions) in valueWithReductionsCount]
+        else: 
             #'standard-backtrack' returns the values in sorted order
             domainValues = sorted(variable.getDomain())
         return domainValues
