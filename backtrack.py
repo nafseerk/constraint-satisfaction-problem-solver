@@ -16,8 +16,9 @@ def backtrack(csp, forwardCheck=False, mrvHeuristic=False, maxDegreeHeuristic=Fa
         return True
 
     #For reporting the progress of the algorithm
-    if csp.getAssignmentCount() % 10000 <= 10:
-        print('took %d steps with %d remaining variables' % (csp.getAssignmentCount(), csp.getUnassignedCount()))
+    if csp.getAssignmentCount() > 10000:
+        print('took %d steps with %d remaining variables...terminating' % (csp.getAssignmentCount(), csp.getUnassignedCount()))
+        return True
 
     currentAssingment = csp.getCurrentAssignment()
     nextVariable = csp.selectUnassignedVariable(mrvHeuristic=mrvHeuristic, maxDegreeHeuristic=maxDegreeHeuristic)
@@ -40,14 +41,18 @@ def backtrack(csp, forwardCheck=False, mrvHeuristic=False, maxDegreeHeuristic=Fa
 
 
 if __name__ == '__main__':
-    sudokuGrid = SudokuGrid('/Users/apple/Documents/git-repos/sudoku/sudoku-as-csp/input-data/30/4.sd')
+    inputFilePath = '/Users/apple/Documents/git-repos/sudoku/version3/constraint-satisfaction-problem-solver/input-data/65/1.sd'
+    sudokuGrid = SudokuGrid(inputFilePath)
     csp = SudokuCSP()
     csp.reset(sudokuGrid.convert())
     print(5*'=' + 'Question Sudoku' + 5*'=')
     csp.print()
     
     finalAssignment = backtrackSearch(csp, forwardCheck=True, mrvHeuristic=True, maxDegreeHeuristic=True, lcvHeuristic=True)
-    print("\nFound a solution in %d assignments" % csp.getAssignmentCount())
-    print('\n\n' +5*'=' + 'Solved Sudoku' + 5*'=')
-    csp.print()
+    if csp.getAssignmentCount() > 10000:
+        print("\nTook > 10000 steps. No solution found")
+    else:
+        print("\nFound a solution in %d assignments" % csp.getAssignmentCount())
+        print('\n\n' +5*'=' + 'Solved Sudoku' + 5*'=')
+        csp.print()
     

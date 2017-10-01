@@ -49,5 +49,5 @@ def runOnDataSet(inputRootDirectory):
                         print('%s on %s complete' % (version, directory+'/'+file))
     
         
-
-runOnDataSet('/Users/apple/Documents/git-repos/sudoku/version3/constraint-satisfaction-problem-solver/input-data')
+inputRootDirectory = '/Users/apple/Documents/git-repos/sudoku/version3/constraint-satisfaction-problem-solver/input-data'
+runOnDataSet(inputRootDirectory)
